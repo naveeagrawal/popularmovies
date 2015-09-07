@@ -1,10 +1,10 @@
 package com.sciencedefine.popularmoviesapp;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 
 /**
@@ -12,10 +12,8 @@ import android.widget.ImageView;
  */
 public class ImageAdapter extends BaseAdapter {
     Context context;
-    LayoutInflater layoutInflater;
     int[] images;
     public ImageAdapter(Context context, int[] images) {
-        this.layoutInflater = LayoutInflater.from(context);
         this.context = context;
         this.images = images;
     }
@@ -27,12 +25,12 @@ public class ImageAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int i) {
-        return images[i];
+        return null;
     }
 
     @Override
     public long getItemId(int i) {
-        return images[i];
+        return 0;
     }
 
     @Override
@@ -40,14 +38,15 @@ public class ImageAdapter extends BaseAdapter {
         ImageView imageView;
         if (convertView == null) {
             imageView = new ImageView(context);
-            convertView = this.layoutInflater.inflate(R.layout.list,
-                    parent, false);
+            imageView.setLayoutParams(new GridView.LayoutParams(150, 150));
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageView.setPadding(8, 8, 8, 8);
         }
         else {
             imageView = (ImageView) convertView;
         }
         imageView.setImageResource(images[i]);
-        return convertView;
+        return imageView;
     }
 
 }

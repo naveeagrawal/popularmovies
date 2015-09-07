@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import android.widget.GridView;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -19,19 +19,21 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        ListView listView = (ListView) rootView.findViewById(R.id.list);
+        GridView gridview = (GridView) rootView.findViewById(R.id.gridview);
         ImageAdapter adapter = new ImageAdapter(getActivity(), images);
-        listView.setAdapter(adapter);
+        gridview.setAdapter(adapter);
         return rootView;
     }
 
     public static int[] images = {
-            R.drawable.image_1,
-            R.drawable.image_2,
-            R.drawable.image_3,
-            R.drawable.image_4,
-            R.drawable.image_5,
-            R.drawable.image_6
+            R.drawable.sample_0,
+            R.drawable.sample_1,
+            R.drawable.sample_2,
+            R.drawable.sample_3,
+            R.drawable.sample_4,
+            R.drawable.sample_5,
+            R.drawable.sample_6,
+            R.drawable.sample_7
     };
     String[] values = new String[] {
             "Android List View",
