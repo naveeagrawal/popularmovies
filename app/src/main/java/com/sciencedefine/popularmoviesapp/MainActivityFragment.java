@@ -9,6 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -92,10 +96,35 @@ public class MainActivityFragment extends Fragment {
             "List View Array Adapter"
     };
 
-    public class FetchMoviesTask extends AsyncTask {
+    public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
+        private String[] getMoviesDataFromJson(String moviesJsonStr)
+                throws JSONException {
+
+            // These are the names of the JSON objects that need to be extracted.
+            final String TMDB_MOVIES = "results";
+            final String TMDB_POSTER = "backdrop_path";
+
+            JSONObject tmdbJson = new JSONObject(moviesJsonStr);
+            JSONArray moviesArray = tmdbJson.getJSONArray(TMDB_MOVIES);
+
+            String[] resultStrs = new String[20];
+            for(int i = 0; i < 20; i++) {
+                // For now, using the poster"
+                String poster;
+
+                // Get the JSON object representing the movie
+                JSONObject movieJson = moviesArray.getJSONObject(i);
+
+                // poster is the value of the element "backdrop_path" in movieJson Object
+                poster = movieJson.getString(TMDB_POSTER);
+                Log.v("Poster Path "+i+":", poster);
+                resultStrs[i] = poster;
+            }
+            return resultStrs;
+        }
 
         @Override
-        protected Object doInBackground(Object[] objects) {
+        protected String[] doInBackground(String... Void) {
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
@@ -134,7 +163,7 @@ public class MainActivityFragment extends Fragment {
                     return null;
                 }
                 moviesJsonStr = buffer.toString();
-                Log.v("Json from TMDB", moviesJsonStr);
+                //Log.v("Json from TMDB", moviesJsonStr);
             } catch (IOException e) {
                 Log.e("PlaceholderFragment", "Error ", e);
                 // If the code didn't successfully get the movie data, there's no point in attempting
@@ -153,7 +182,28 @@ public class MainActivityFragment extends Fragment {
                 }
             }
 
-            return null;
+            try {
+                String[] resultingMovies;
+                resultingMovies = getMoviesDataFromJson(moviesJsonStr);
+                return resultingMovies;
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
+        @Override
+        /**
+         * @param strings resultingMovies String array received from doInBackground
+         */
+        protected void onPostExecute(String[] strings) {
+            super.onPostExecute(strings);
+            if(strings != null){
+                Log.v("Relative Poster Path 1:", strings[0]);
+
+//                forecastAdapter.clear();
+//                forecastAdapter.addAll(strings);
+            }
+        }
+
     }
 }
