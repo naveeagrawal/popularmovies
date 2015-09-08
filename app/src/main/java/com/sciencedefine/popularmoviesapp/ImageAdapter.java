@@ -7,13 +7,15 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Picasso;
+
 /**
  * Created by naveenagrawal on 07-Sep-15.
  */
 public class ImageAdapter extends BaseAdapter {
     Context context;
-    int[] images;
-    public ImageAdapter(Context context, int[] images) {
+    String[] images;
+    public ImageAdapter(Context context, String[] images) {
         this.context = context;
         this.images = images;
     }
@@ -45,7 +47,11 @@ public class ImageAdapter extends BaseAdapter {
         else {
             imageView = (ImageView) convertView;
         }
-        imageView.setImageResource(images[i]);
+        Picasso
+                .with(context)
+                .load(images[i])
+                .fit() // will explain later
+                .into(imageView);
         return imageView;
     }
 
