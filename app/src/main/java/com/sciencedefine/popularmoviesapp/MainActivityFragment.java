@@ -1,5 +1,6 @@
 package com.sciencedefine.popularmoviesapp;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -26,6 +27,7 @@ import java.net.URL;
 public class MainActivityFragment extends Fragment {
     ImageAdapter mAdapter;
     GridView mGridView;
+    String[] mImages = new String[20];
 
     public MainActivityFragment() {
     }
@@ -35,34 +37,14 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mGridView = (GridView) rootView.findViewById(R.id.gridview);
-//        mAdapter = new ImageAdapter(getActivity(), images);
-//        gridview.setAdapter(mAdapter);
         return rootView;
     }
     @Override
     public void onStart() {
         super.onStart();
         FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
-        fetchMoviesTask.execute();
-//        mAdapter = new ImageAdapter(getActivity(), images);
-//        mGridView.setAdapter(mAdapter);
+        fetchMoviesTask.execute("vote_average.desc");
     }
-    public static String[] images = {
-//            "http://i.imgur.com/rFLNqWI.jpg",
-//            "http://i.imgur.com/C9pBVt7.jpg",
-//            "http://i.imgur.com/rT5vXE1.jpg",
-//            "http://i.imgur.com/aIy5R2k.jpg",
-//            "http://i.imgur.com/MoJs9pT.jpg",
-//            "http://i.imgur.com/S963yEM.jpg",
-//            "http://i.imgur.com/rLR2cyc.jpg",
-//            "http://i.imgur.com/SEPdUIx.jpg",
-//            "http://i.imgur.com/aC9OjaM.jpg",
-//            "http://i.imgur.com/76Jfv9b.jpg",
-//            "http://i.imgur.com/fUX7EIB.jpg",
-//            "http://i.imgur.com/syELajx.jpg",
-//            "http://i.imgur.com/COzBnru.jpg",
-//            "http://i.imgur.com/Z3QjilA.jpg",
-    };
 
     public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
         private String[] getMoviesDataFromJson(String moviesJsonStr)
@@ -92,19 +74,25 @@ public class MainActivityFragment extends Fragment {
         }
 
         @Override
-        protected String[] doInBackground(String... Void) {
+        protected String[] doInBackground(String... Params) {
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
             // Will contain the raw JSON response as a string.
             String moviesJsonStr = null;
+            String apiKey = "854345408413cd9a9d5c8ffb980da45e";
             try {
-                // Construct the URL for the TheMovieDB query
-                //http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=[YOUR API KEY]
-                final String MOVIE_URL =
-                        "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=854345408413cd9a9d5c8ffb980da45e";
-                URL url = new URL(MOVIE_URL);
+                final String MOVIES_BASE_URL =
+                        "http://api.themoviedb.org/3/discover/movie?";
+                final String SORT_PARAM = "sort_by";
+                final String API_KEY_PARAM = "api_key";
+                Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
+                        .appendQueryParameter(SORT_PARAM, Params[0])
+                        .appendQueryParameter(API_KEY_PARAM, apiKey)
+                        .build();
+                URL url = new URL(builtUri.toString());
+                Log.v("Built URI ", builtUri.toString());
                 // Create the request to TheMovieDB, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -166,9 +154,8 @@ public class MainActivityFragment extends Fragment {
         protected void onPostExecute(String[] strings) {
             super.onPostExecute(strings);
             if(strings != null){
-                images = strings;
-                //mAdapter.notifyDataSetChanged();
-                mAdapter = new ImageAdapter(getActivity(), images);
+                mImages = strings;
+                mAdapter = new ImageAdapter(getActivity(), mImages);
                 mGridView.setAdapter(mAdapter);
             }
         }
