@@ -24,6 +24,8 @@ import java.net.URL;
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment {
+    ImageAdapter mAdapter;
+    GridView mGridView;
 
     public MainActivityFragment() {
     }
@@ -32,9 +34,9 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        GridView gridview = (GridView) rootView.findViewById(R.id.gridview);
-        ImageAdapter adapter = new ImageAdapter(getActivity(), eatFoodyImages);
-        gridview.setAdapter(adapter);
+        mGridView = (GridView) rootView.findViewById(R.id.gridview);
+//        mAdapter = new ImageAdapter(getActivity(), images);
+//        gridview.setAdapter(mAdapter);
         return rootView;
     }
     @Override
@@ -42,58 +44,24 @@ public class MainActivityFragment extends Fragment {
         super.onStart();
         FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
         fetchMoviesTask.execute();
+//        mAdapter = new ImageAdapter(getActivity(), images);
+//        mGridView.setAdapter(mAdapter);
     }
-    public static String[] eatFoodyImages = {
-            "http://i.imgur.com/rFLNqWI.jpg",
-            "http://i.imgur.com/C9pBVt7.jpg",
-            "http://i.imgur.com/rT5vXE1.jpg",
-            "http://i.imgur.com/aIy5R2k.jpg",
-            "http://i.imgur.com/MoJs9pT.jpg",
-            "http://i.imgur.com/S963yEM.jpg",
-            "http://i.imgur.com/rLR2cyc.jpg",
-            "http://i.imgur.com/SEPdUIx.jpg",
-            "http://i.imgur.com/aC9OjaM.jpg",
-            "http://i.imgur.com/76Jfv9b.jpg",
-            "http://i.imgur.com/fUX7EIB.jpg",
-            "http://i.imgur.com/syELajx.jpg",
-            "http://i.imgur.com/COzBnru.jpg",
-            "http://i.imgur.com/Z3QjilA.jpg",
-    };
-
-    public static int[] images = {
-            R.drawable.sample_0,
-            R.drawable.sample_1,
-            R.drawable.sample_2,
-            R.drawable.sample_3,
-            R.drawable.sample_4,
-            R.drawable.sample_5,
-            R.drawable.sample_6,
-            R.drawable.sample_7
-    };
-    String[] values = new String[] {
-            "Android List View",
-            "Adapter implementation",
-            "Simple List View In Android",
-            "Create List View Android",
-            "Android Example",
-            "List View Source Code",
-            "List View Array Adapter",
-            "Android Example List View",
-            "Android List View",
-            "Adapter implementation",
-            "Simple List View In Android",
-            "Create List View Android",
-            "Android Example",
-            "List View Source Code",
-            "List View Array Adapter",
-            "Android Example List View",
-            "Android List View",
-            "Adapter implementation",
-            "Simple List View In Android",
-            "Create List View Android",
-            "Android Example",
-            "List View Source Code",
-            "List View Array Adapter"
+    public static String[] images = {
+//            "http://i.imgur.com/rFLNqWI.jpg",
+//            "http://i.imgur.com/C9pBVt7.jpg",
+//            "http://i.imgur.com/rT5vXE1.jpg",
+//            "http://i.imgur.com/aIy5R2k.jpg",
+//            "http://i.imgur.com/MoJs9pT.jpg",
+//            "http://i.imgur.com/S963yEM.jpg",
+//            "http://i.imgur.com/rLR2cyc.jpg",
+//            "http://i.imgur.com/SEPdUIx.jpg",
+//            "http://i.imgur.com/aC9OjaM.jpg",
+//            "http://i.imgur.com/76Jfv9b.jpg",
+//            "http://i.imgur.com/fUX7EIB.jpg",
+//            "http://i.imgur.com/syELajx.jpg",
+//            "http://i.imgur.com/COzBnru.jpg",
+//            "http://i.imgur.com/Z3QjilA.jpg",
     };
 
     public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
@@ -117,8 +85,8 @@ public class MainActivityFragment extends Fragment {
 
                 // poster is the value of the element "backdrop_path" in movieJson Object
                 poster = movieJson.getString(TMDB_POSTER);
-                Log.v("Poster Path "+i+":", poster);
-                resultStrs[i] = poster;
+                //Log.v("Poster Path "+i+":", "http://image.tmdb.org/t/p/w185" + poster);
+                resultStrs[i] = "http://image.tmdb.org/t/p/w185" + poster;
             }
             return resultStrs;
         }
@@ -198,10 +166,10 @@ public class MainActivityFragment extends Fragment {
         protected void onPostExecute(String[] strings) {
             super.onPostExecute(strings);
             if(strings != null){
-                Log.v("Relative Poster Path 1:", strings[0]);
-
-//                forecastAdapter.clear();
-//                forecastAdapter.addAll(strings);
+                images = strings;
+                //mAdapter.notifyDataSetChanged();
+                mAdapter = new ImageAdapter(getActivity(), images);
+                mGridView.setAdapter(mAdapter);
             }
         }
 

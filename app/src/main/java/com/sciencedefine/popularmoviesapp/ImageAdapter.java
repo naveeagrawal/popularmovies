@@ -27,7 +27,7 @@ public class ImageAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int i) {
-        return null;
+        return images[i];
     }
 
     @Override
