@@ -1,5 +1,6 @@
 package com.sciencedefine.popularmoviesapp;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import org.json.JSONArray;
@@ -39,6 +41,14 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mGridView = (GridView) rootView.findViewById(R.id.gridview);
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent detailsIntent = new Intent(getActivity(), DetailsActivity.class);
+                //detailIntent.putExtra(Intent.EXTRA_TEXT, forecast);
+                startActivity(detailsIntent);
+            }
+        });
         return rootView;
     }
     @Override
