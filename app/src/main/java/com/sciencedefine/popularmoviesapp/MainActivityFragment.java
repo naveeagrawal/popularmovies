@@ -1,8 +1,10 @@
 package com.sciencedefine.popularmoviesapp;
 
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,8 +44,10 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String sortPref = sharedPref.getString(getString(R.string.sort_order_key), getString(R.string.default_sort_order));
         FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
-        fetchMoviesTask.execute("vote_average.desc");
+        fetchMoviesTask.execute(sortPref);
     }
 
     public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
