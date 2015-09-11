@@ -46,13 +46,13 @@ public class MainActivityFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent detailsIntent = new Intent(getActivity(), DetailsActivity.class);
-                String movieTitle = null;
+                String[] movieDetails = null;
                 try {
-                    movieTitle = getMovieDetailsFromJson(moviesJsonStr, i)[0];
+                    movieDetails = getMovieDetailsFromJson(moviesJsonStr, i);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                detailsIntent.putExtra(Intent.EXTRA_TEXT, movieTitle);
+                detailsIntent.putExtra(Intent.EXTRA_TEXT, movieDetails);
                 startActivity(detailsIntent);
             }
         });
@@ -71,22 +71,33 @@ public class MainActivityFragment extends Fragment {
 
         // These are the names of the JSON objects that need to be extracted.
         final String TMDB_MOVIES = "results";
-        final String TMDB_POSTER = "backdrop_path";
+        final String MOVIE_POSTER = "poster_path";
         final String MOVIE_TITLE = "original_title";
+        final String MOVIE_PLOT = "overview";
+        final String MOVIE_USER_RATING = "vote_average";
+        final String MOVIE_RELEASE_DATE = "release_date";
 
         JSONObject tmdbJson = new JSONObject(moviesJsonStr);
         JSONArray moviesArray = tmdbJson.getJSONArray(TMDB_MOVIES);
 
-        String[] movieDetails = new String[1];
-        //Title of the movie
+        //Details of the movie
+        String moviePoster;
         String movieTitle;
+        String moviePlot;
+        String movieUserRating;
+        String movieReleaseDate;
 
-        // Get the JSON object representing the movie
+        // Get the JSON object representing the movie at the "index"
         JSONObject movieJson = moviesArray.getJSONObject(index);
 
         //  movieTitle is the value of the Json element "original_title" in movieJson Object
+        moviePoster = movieJson.getString(MOVIE_POSTER);
         movieTitle = movieJson.getString(MOVIE_TITLE);
-        movieDetails[0] = movieTitle;
+        moviePlot = movieJson.getString(MOVIE_PLOT);
+        movieUserRating = movieJson.getString(MOVIE_USER_RATING);
+        movieReleaseDate = movieJson.getString(MOVIE_RELEASE_DATE);
+        //String Array to store the details of the movie at the "index"
+        String[] movieDetails = {"http://image.tmdb.org/t/p/w185" + moviePoster, movieTitle, moviePlot, movieUserRating, movieReleaseDate};
         return movieDetails;
     }
     private String[] getMoviesDataFromJson(String moviesJsonStr)
@@ -94,7 +105,7 @@ public class MainActivityFragment extends Fragment {
 
         // These are the names of the JSON objects that need to be extracted.
         final String TMDB_MOVIES = "results";
-        final String TMDB_POSTER = "backdrop_path";
+        final String TMDB_POSTER = "poster_path";
 
         JSONObject tmdbJson = new JSONObject(moviesJsonStr);
         JSONArray moviesArray = tmdbJson.getJSONArray(TMDB_MOVIES);
