@@ -1,16 +1,23 @@
 package com.sciencedefine.popularmoviesapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 public class DetailsActivity extends ActionBarActivity {
+    private String movieTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
+        Intent intent = getIntent();
+        movieTitle = intent.getStringExtra(Intent.EXTRA_TEXT);
+        TextView movieTitleTextView = (TextView) findViewById(R.id.text_movie_title);
+        movieTitleTextView.setText(movieTitle);
     }
 
 

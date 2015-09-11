@@ -32,6 +32,7 @@ public class MainActivityFragment extends Fragment {
     ImageAdapter mAdapter;
     GridView mGridView;
     String[] mImages = new String[20];
+    String moviesJsonStr = null;
 
     public MainActivityFragment() {
     }
@@ -45,7 +46,13 @@ public class MainActivityFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent detailsIntent = new Intent(getActivity(), DetailsActivity.class);
-                //detailIntent.putExtra(Intent.EXTRA_TEXT, forecast);
+                String movieTitle = null;
+                try {
+                    movieTitle = getMovieDetailsFromJson(moviesJsonStr, i)[0];
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                detailsIntent.putExtra(Intent.EXTRA_TEXT, movieTitle);
                 startActivity(detailsIntent);
             }
         });
@@ -59,33 +66,56 @@ public class MainActivityFragment extends Fragment {
         FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
         fetchMoviesTask.execute(sortPref);
     }
+    private String[] getMovieDetailsFromJson(String moviesJsonStr, int index)
+            throws JSONException {
+
+        // These are the names of the JSON objects that need to be extracted.
+        final String TMDB_MOVIES = "results";
+        final String TMDB_POSTER = "backdrop_path";
+        final String MOVIE_TITLE = "original_title";
+
+        JSONObject tmdbJson = new JSONObject(moviesJsonStr);
+        JSONArray moviesArray = tmdbJson.getJSONArray(TMDB_MOVIES);
+
+        String[] movieDetails = new String[1];
+        //Title of the movie
+        String movieTitle;
+
+        // Get the JSON object representing the movie
+        JSONObject movieJson = moviesArray.getJSONObject(index);
+
+        //  movieTitle is the value of the Json element "original_title" in movieJson Object
+        movieTitle = movieJson.getString(MOVIE_TITLE);
+        movieDetails[0] = movieTitle;
+        return movieDetails;
+    }
+    private String[] getMoviesDataFromJson(String moviesJsonStr)
+            throws JSONException {
+
+        // These are the names of the JSON objects that need to be extracted.
+        final String TMDB_MOVIES = "results";
+        final String TMDB_POSTER = "backdrop_path";
+
+        JSONObject tmdbJson = new JSONObject(moviesJsonStr);
+        JSONArray moviesArray = tmdbJson.getJSONArray(TMDB_MOVIES);
+
+        String[] resultStrs = new String[20];
+        for(int i = 0; i < 20; i++) {
+            // For now, using the poster"
+            String poster;
+
+            // Get the JSON object representing the movie
+            JSONObject movieJson = moviesArray.getJSONObject(i);
+
+            // poster is the value of the element "backdrop_path" in movieJson Object
+            poster = movieJson.getString(TMDB_POSTER);
+            //Log.v("Poster Path "+i+":", "http://image.tmdb.org/t/p/w185" + poster);
+            resultStrs[i] = "http://image.tmdb.org/t/p/w185" + poster;
+        }
+        return resultStrs;
+    }
 
     public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
-        private String[] getMoviesDataFromJson(String moviesJsonStr)
-                throws JSONException {
-
-            // These are the names of the JSON objects that need to be extracted.
-            final String TMDB_MOVIES = "results";
-            final String TMDB_POSTER = "backdrop_path";
-
-            JSONObject tmdbJson = new JSONObject(moviesJsonStr);
-            JSONArray moviesArray = tmdbJson.getJSONArray(TMDB_MOVIES);
-
-            String[] resultStrs = new String[20];
-            for(int i = 0; i < 20; i++) {
-                // For now, using the poster"
-                String poster;
-
-                // Get the JSON object representing the movie
-                JSONObject movieJson = moviesArray.getJSONObject(i);
-
-                // poster is the value of the element "backdrop_path" in movieJson Object
-                poster = movieJson.getString(TMDB_POSTER);
-                //Log.v("Poster Path "+i+":", "http://image.tmdb.org/t/p/w185" + poster);
-                resultStrs[i] = "http://image.tmdb.org/t/p/w185" + poster;
-            }
-            return resultStrs;
-        }
 
         @Override
         protected String[] doInBackground(String... Params) {
@@ -94,7 +124,6 @@ public class MainActivityFragment extends Fragment {
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
             // Will contain the raw JSON response as a string.
-            String moviesJsonStr = null;
             String apiKey = "854345408413cd9a9d5c8ffb980da45e";
             try {
                 final String MOVIES_BASE_URL =
